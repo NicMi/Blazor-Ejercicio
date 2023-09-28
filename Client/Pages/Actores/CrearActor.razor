@@ -1,0 +1,16 @@
+﻿@page "/actores/crear"
+
+<h3>CrearActor</h3>
+
+<FormularioActores OnValidSubmit="Crear" Actor="Actor"/>
+
+@code {
+    private Actor Actor = new Actor();
+
+    void Crear()
+    {
+        Console.WriteLine("Crear actor");
+    }
+
+
+}
