@@ -1,0 +1,122 @@
+﻿
+<EditForm Model="Pelicula" OnValidSubmit="OnDataAnnotationsValidated">
+    <DataAnnotationsValidator/>
+    <div class="mb-3">
+        <label>Titulo:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Pelicula.Titulo"/>
+            <ValidationMessage For="@(() => Pelicula.Titulo)"/>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>En Cartelera:</label>
+        <div>
+            <InputCheckbox @bind-Value="@Pelicula.EnCartelera" />
+            <ValidationMessage For="@(() => Pelicula.EnCartelera)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Fecha lanzamiento:</label>
+        <div>
+            <InputDate class="form-control" @bind-Value="@Pelicula.Lanzamiento" />
+            <ValidationMessage For="@(() => Pelicula.Lanzamiento)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <InputImg Label="Poster" ImagenSeleccionada="ImagenSeleccionada" ImagenURL="@imagenURL" />
+    </div>
+
+    <div class="mb-3 form-markdown">
+        <InputMarkdown @bind-Value="@Pelicula.Resumen" For=@(() => Pelicula.Resumen) Label="Resumen" />
+    </div>
+
+    <div class="mb-3">
+        <label>Géneros:</label>
+        <div>
+            <SelectorMultiple NoSeleccionados="NoSeleccionados" Seleccionados="Seleccionados">
+
+            </SelectorMultiple>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Actores:</label>
+        <div>
+            <SelectorMultipleTypeahead Context="Actor" SearchMethod="BuscarActores" ElementosSeleccionados="ActoresSeleccionados">
+                <MyListTemplate>
+                    @Actor.Nombre / <input type="text" placeholder="Personaje" @bind="Actor.Personaje"/>
+                </MyListTemplate>
+                <MyResultTemplate>
+                    <img style="width: 50px" src="@Actor.Foto"/>
+                    @Actor.Nombre
+                </MyResultTemplate>
+            </SelectorMultipleTypeahead>
+        </div>
+    </div>
+
+    <button class="btn btn-success">Guardar cambios</button>
+
+</EditForm>
+
+
+@code {
+    string? imagenURL;
+
+    [Parameter] 
+    [EditorRequired]
+    public Pelicula Pelicula { get; set; } = null!;
+
+    [Parameter]
+    [EditorRequired]
+    public EventCallback OnValidSubmit { get; set; }
+
+    [Parameter]
+    public List<Genero> GenerosSeleccionados { get; set; } = new List<Genero>();
+
+    [Parameter]
+    [EditorRequired]
+    public List<Genero> GenerosNoSeleccionados { get; set; } = new List<Genero>();
+
+    [Parameter]
+    public List<Actor> ActoresSeleccionados { get; set; } = new List<Actor>();
+
+    private List<SelectorMultipleModel> Seleccionados { get; set; } = new List<SelectorMultipleModel>();
+    private List<SelectorMultipleModel> NoSeleccionados { get; set; } = new List<SelectorMultipleModel>();
+
+    protected override void OnInitialized()
+    {
+        if (!string.IsNullOrEmpty(Pelicula.Poster))
+        {
+            imagenURL = Pelicula.Poster;
+            Pelicula.Poster = null;
+        }
+
+        Seleccionados = GenerosSeleccionados.Select(x => new SelectorMultipleModel(x.Id.ToString(), x.Nombre)).ToList();
+        NoSeleccionados = GenerosNoSeleccionados.Select(x => new SelectorMultipleModel(x.Id.ToString(), x.Nombre)).ToList();
+    }
+
+    private void ImagenSeleccionada(string imagenBase64)
+    {
+        Pelicula.Poster = imagenBase64;
+        imagenURL = null;
+    }
+
+    private async Task<IEnumerable<Actor>> BuscarActores(string searchText){
+        return new List<Actor>(){
+            new Actor{Id = 1, Nombre= "Tom Holland", Foto = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fnetworthsize.com%2Fwp-content%2Fuploads%2F2020%2F04%2FTom-Holland-Net-Worth-1920x1440.jpg&f=1&nofb=1&ipt=099b4a4fc926955148e6b2681504f105c01f5629b84dba458f0fc5e745ea1fff&ipo=images"},
+            new Actor{Id = 2, Nombre= "Tom Hanks", Foto = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP._FQ9Y6KKBjc4tROQsrIwrgHaE9%26pid%3DApi&f=1&ipt=15becc81e4eb81cf3dd78469174744d29c3ae23e2dd3d623a91a1b837b0ec8ca&ipo=images"}
+        };
+    }
+
+    private async Task OnDataAnnotationsValidated()
+    {
+        Pelicula.GenerosPelicula = Seleccionados.Select(x => new GeneroPelicula { GeneroId = int.Parse(x.Llave) }).ToList();
+
+        Pelicula.PeliculasActor = ActoresSeleccionados.Select(x => new PeliculaActor { ActorId = x.Id, Personaje = x.Personaje }).ToList();
+
+        await OnValidSubmit.InvokeAsync();
+    }
+}

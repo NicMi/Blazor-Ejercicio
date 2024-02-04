@@ -112,3 +112,5 @@ C:\Projects\repos\BlazorPeliculas\BlazorPeliculas\Server\obj\Debug\net7.0\refint
 C:\Projects\repos\BlazorPeliculas\BlazorPeliculas\Server\obj\Debug\net7.0\BlazorPeliculas.Server.pdb
 C:\Projects\repos\BlazorPeliculas\BlazorPeliculas\Server\obj\Debug\net7.0\BlazorPeliculas.Server.genruntimeconfig.cache
 C:\Projects\repos\BlazorPeliculas\BlazorPeliculas\Server\obj\Debug\net7.0\ref\BlazorPeliculas.Server.dll
+C:\Projects\repos\BlazorPeliculas\BlazorPeliculas\Server\bin\Debug\net7.0\Markdig.dll
+C:\Projects\repos\BlazorPeliculas\BlazorPeliculas\Server\bin\Debug\net7.0\Blazored.Typeahead.dll

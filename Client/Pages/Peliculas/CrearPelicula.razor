@@ -1,14 +1,40 @@
 ﻿@page "/peliculas/crear"
 @inject NavigationManager navigationManager
+@inject IRepositorio repositorio
+@inject SweetAlertService swal
 
-<h3>CrearPelicula</h3>
+<h3>Crear Película</h3>
 
-<button onclick="@Crear">Salvar Película</button>
+<FormularioPeliculas Pelicula="Pelicula" OnValidSubmit="Crear"
+    GenerosNoSeleccionados="GenerosNoSeleccionados"></FormularioPeliculas>
 
 @code {
-    void Crear()
+
+    private Pelicula Pelicula = new Pelicula();
+    private List<Genero> GenerosNoSeleccionados = new List<Genero>();
+
+    protected override void OnInitialized()
     {
-        Console.WriteLine(navigationManager.Uri);
-        navigationManager.NavigateTo("pelicula");
+        GenerosNoSeleccionados = new List<Genero>()
+        {
+            new Genero(){Id = 1, Nombre = "Comedia"},
+            new Genero(){Id = 2, Nombre = "Drama"},
+            new Genero(){Id = 3, Nombre = "Acción"},
+            new Genero(){Id = 4, Nombre = "Sci-fi"},
+        };
+    }
+
+    async Task Crear()
+    {
+        var httpResponse = await repositorio.Post("api/peliculas", Pelicula);
+
+        if (httpResponse.Error)
+        {
+            var mensajeError = await httpResponse.ObtenerMensajeError();
+            await swal.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+        } else
+        {
+            navigationManager.NavigateTo($"/pelicula/{id}/{Pelicula.Titulo.Replace(" ","-")}");
+        }
     }
 }

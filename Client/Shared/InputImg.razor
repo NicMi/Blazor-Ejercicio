@@ -6,11 +6,11 @@
 </div>
 
 <div>
-    @if (ImagenURL is not null)
+    @if (imagenBase64 is not null)
     {
         <div>
             <div style="margin: 10px">
-                <img src="@ImagenURL" style="width: 400px" />
+                <img src="data:image/jpeg;base64, @imagenBase64" style="width:400px" />
             </div>
         </div>
     }
