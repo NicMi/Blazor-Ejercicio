@@ -11,6 +11,11 @@ namespace BlazorPeliculas.Client.Repositorios
             HttpClient = httpClient;
         }
 
+        private JsonSerializerOptions OpcionesPorDefectoJSON => new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+        };
+
         public HttpClient HttpClient { get; }
 
         public async Task<HttpResponseWrapper<object>> Post<T>(string url, T enviar)
@@ -21,6 +26,20 @@ namespace BlazorPeliculas.Client.Repositorios
             return new HttpResponseWrapper<object>(null, !responseHttp.IsSuccessStatusCode, responseHttp);
         }
 
+        public async Task<HttpResponseWrapper<T>> Get<T>(string url)
+        {
+            var respuestaHTTP = await HttpClient.GetAsync(url);
+
+            if (respuestaHTTP.IsSuccessStatusCode)
+            {
+                var respuesta = await DeserealizarRespuesta<T>(respuestaHTTP, OpcionesPorDefectoJSON);
+                return new HttpResponseWrapper<T>(respuesta, error: false, respuestaHTTP);
+            } else
+            {
+                return new HttpResponseWrapper<T>(default, error: true, respuestaHTTP);
+            }
+        }
+
         public async Task<HttpResponseWrapper<TResponse>> Post<T, TResponse>(string url, T enviar)
         {
             var enviarJSON = JsonSerializer.Serialize(enviar);
@@ -28,11 +47,12 @@ namespace BlazorPeliculas.Client.Repositorios
             var responseHttp = await HttpClient.PostAsync(url, enviarContent);
 
             if (responseHttp.IsSuccessStatusCode) 
-            { 
-                
+            {
+                var response = await DeserealizarRespuesta<TResponse>(responseHttp, OpcionesPorDefectoJSON);
+                return new HttpResponseWrapper<TResponse>(response, error: false, responseHttp);
             }
 
-            return new HttpResponseWrapper<object>(null, !responseHttp.IsSuccessStatusCode, responseHttp);
+            return new HttpResponseWrapper<TResponse>(default, !responseHttp.IsSuccessStatusCode, responseHttp);
         }
 
         private async Task<T> DeserealizarRespuesta<T>(HttpResponseMessage httpResponse, JsonSerializerOptions jsonSerializerOptions) 

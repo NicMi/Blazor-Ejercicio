@@ -4,29 +4,31 @@
 @inject SweetAlertService swal
 
 <h3>Crear Película</h3>
-
-<FormularioPeliculas Pelicula="Pelicula" OnValidSubmit="Crear"
+@if (MostrarFormulario)
+{
+    <FormularioPeliculas Pelicula="Pelicula" OnValidSubmit="Crear"
     GenerosNoSeleccionados="GenerosNoSeleccionados"></FormularioPeliculas>
+} else
+{
+    <p>Cargando...</p>
+}
 
 @code {
 
     private Pelicula Pelicula = new Pelicula();
     private List<Genero> GenerosNoSeleccionados = new List<Genero>();
+    public bool MostrarFormulario { get; set; } = false;
 
-    protected override void OnInitialized()
+    protected async override Task OnInitializedAsync()
     {
-        GenerosNoSeleccionados = new List<Genero>()
-        {
-            new Genero(){Id = 1, Nombre = "Comedia"},
-            new Genero(){Id = 2, Nombre = "Drama"},
-            new Genero(){Id = 3, Nombre = "Acción"},
-            new Genero(){Id = 4, Nombre = "Sci-fi"},
-        };
+        var respuestaHTTP = await repositorio.Get<List<Genero>>("/api/generos");
+        GenerosNoSeleccionados = respuestaHTTP.Response!;
+        MostrarFormulario = true;
     }
 
     async Task Crear()
     {
-        var httpResponse = await repositorio.Post("api/peliculas", Pelicula);
+        var httpResponse = await repositorio.Post<Pelicula, int>("api/peliculas", Pelicula);
 
         if (httpResponse.Error)
         {
@@ -34,7 +36,8 @@
             await swal.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
         } else
         {
-            navigationManager.NavigateTo($"/pelicula/{id}/{Pelicula.Titulo.Replace(" ","-")}");
+            var PeliculaId = httpResponse.Response;
+            navigationManager.NavigateTo($"/pelicula/{PeliculaId}/{Pelicula.Titulo.Replace(" ","-")}");
         }
     }
 }

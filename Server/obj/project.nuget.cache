@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "6eVvS4+VFfculCc4EGKx8bIASxpGsrenyGqvkQK+Q8PFvQgYgya8zQ0vhURqyNqSRdcQdPcbvjXXEu4eHkyEHg==",
+  "dgSpecHash": "xovMEC2fmYvH+kbqqK9KWANAdD7g5lV2jgYyev97/PqG0PpHbwyT4qCAwgIlzqpjEl0bIoZGohTwoj2V2fjA7g==",
   "success": true,
   "projectFilePath": "C:\\Projects\\repos\\BlazorPeliculas\\BlazorPeliculas\\Server\\BlazorPeliculas.Server.csproj",
   "expectedPackageFiles": [

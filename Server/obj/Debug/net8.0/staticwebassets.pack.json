@@ -1,6 +1,14 @@
 {
   "Files": [
     {
+      "Id": "C:\\Projects\\repos\\BlazorPeliculas\\BlazorPeliculas\\Server\\wwwroot\\peliculas\\050e5d8a-7ee1-47df-a97c-b4f427108531.jpg",
+      "PackagePath": "staticwebassets\\peliculas\\050e5d8a-7ee1-47df-a97c-b4f427108531.jpg"
+    },
+    {
+      "Id": "C:\\Projects\\repos\\BlazorPeliculas\\BlazorPeliculas\\Server\\wwwroot\\peliculas\\59af3c6b-04b8-480b-ab09-4bcc50ad453b.jpg",
+      "PackagePath": "staticwebassets\\peliculas\\59af3c6b-04b8-480b-ab09-4bcc50ad453b.jpg"
+    },
+    {
       "Id": "C:\\Projects\\repos\\BlazorPeliculas\\BlazorPeliculas\\Server\\wwwroot\\personas\\e179d9fb-c1a0-4b18-a8cd-7b31df12160bjpg",
       "PackagePath": "staticwebassets\\personas"
     },

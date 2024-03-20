@@ -1,9 +1,16 @@
 ﻿@page "/generos/editar/{GeneroId:int}"
 @inject NavigationManager navigationManager
+@inject IRepositorio repositorio
+@inject SweetAlertService swal
 
 <h3>EditarGenero</h3>
 
-<FormularioGenero @ref="formularioGenero" Genero="Genero" OnValidSubmit="Editar" />
+@if (Genero is null){
+    <p>Cargando...</p>
+}
+else{
+    <FormularioGenero @ref="formularioGenero" Genero="Genero" OnValidSubmit="Editar" />
+}
 
 @code {
     [Parameter] public int GeneroId { get; set; }
@@ -11,9 +18,26 @@
     private FormularioGenero? formularioGenero;
 
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        Genero = new Genero() { Id = GeneroId, Nombre = "Comedia" };
+        var respuestaHTTP = await repositorio.Get<Genero>($"api/generos/{GeneroId}");
+
+    if (respuestaHTTP.Error)
+        {
+            if(respuestaHTTP.HttpResponseMessage.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                navigationManager.NavigateTo("generos");
+            }
+            else
+            {
+                var mensajeError = await respuestaHTTP.ObtenerMensajeError();
+                await swal.FireAsync("Error", mensajeError, SweetAlertIcon.Error);
+            }
+        } 
+        else
+        {
+            Genero = respuestaHTTP.Response;
+        }
     }
 
     private void Editar()

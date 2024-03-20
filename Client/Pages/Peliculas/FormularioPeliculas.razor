@@ -1,4 +1,6 @@
-﻿
+﻿@inject IRepositorio repositorio
+
+
 <EditForm Model="Pelicula" OnValidSubmit="OnDataAnnotationsValidated">
     <DataAnnotationsValidator/>
     <div class="mb-3">
@@ -14,6 +16,14 @@
         <div>
             <InputCheckbox @bind-Value="@Pelicula.EnCartelera" />
             <ValidationMessage For="@(() => Pelicula.EnCartelera)" />
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label>Trailer:</label>
+        <div>
+            <InputText class="form-control" @bind-Value="@Pelicula.Trailer" />
+            <ValidationMessage For="@(() => Pelicula.Trailer)" />
         </div>
     </div>
 
@@ -105,10 +115,8 @@
     }
 
     private async Task<IEnumerable<Actor>> BuscarActores(string searchText){
-        return new List<Actor>(){
-            new Actor{Id = 1, Nombre= "Tom Holland", Foto = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fnetworthsize.com%2Fwp-content%2Fuploads%2F2020%2F04%2FTom-Holland-Net-Worth-1920x1440.jpg&f=1&nofb=1&ipt=099b4a4fc926955148e6b2681504f105c01f5629b84dba458f0fc5e745ea1fff&ipo=images"},
-            new Actor{Id = 2, Nombre= "Tom Hanks", Foto = "https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftse1.mm.bing.net%2Fth%3Fid%3DOIP._FQ9Y6KKBjc4tROQsrIwrgHaE9%26pid%3DApi&f=1&ipt=15becc81e4eb81cf3dd78469174744d29c3ae23e2dd3d623a91a1b837b0ec8ca&ipo=images"}
-        };
+        var respuestaHTTP = await repositorio.Get<List<Actor>>($"api/actores/buscar/{searchText}");
+        return respuestaHTTP.Response!;
     }
 
     private async Task OnDataAnnotationsValidated()
